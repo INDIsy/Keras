@@ -76,7 +76,7 @@ for i in range(tdel.days + 1):
 
 
 #CH
-data_ch_reg = np.genfromtxt(hdir + 'CH_Regions_025scl2.dat', dtype=[('date', '<i8'), ('loc', '<U136')])
+data_ch_reg = np.genfromtxt(hdir + 'input.txt', dtype=[('date', '<i8'), ('loc', '<U136')])
 
 
 # In[11]:
