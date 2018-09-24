@@ -1,0 +1,33 @@
+# 3ch input 1 kp output
+model = tf.keras.Sequential()
+model.add(tf.keras.layers.LSTM(20, batch_input_shape = (1,3,136), stateful=True))
+model.add(tf.keras.layers.Dense(28,activation='softmax'))
+
+model.compile(loss='categorical_crossentropy', optimizer='Adam', metrics=['accuracy','mse'])
+
+#Callback ft
+class CustomHistory(tf.keras.callbacks.Callback):
+    def init(self):
+        self.train_loss = []
+        self.val_loss = []
+        self.train_acc = []
+        self.val_acc = []        
+        
+    def on_epoch_end(self, batch, logs={}):
+        self.train_loss.append(logs.get('loss'))
+        self.val_loss.append(logs.get('val_loss'))
+        self.train_acc.append(logs.get('acc'))
+        self.val_acc.append(logs.get('val_acc'))
+        
+
+model.fit(x_train,y_train,epochs=num_epochs,batch_size=1, verbose=1, shuffle=False, callbacks=[custom_hist], validation_data=(x_val,y_val))
+
+scores = model.evaluate(x_train,y_train,batch_size=1)
+print("%s: %.2f%%" %(model.metrics_names[1], scores[1]*100))
+
+yhat_tr = model.predict_classes(x_train[:32*(len(x_train)//32)])
+temp = [np.where(y == 1)[0][0] for y in y_train[:32*(len(x_train)//32)]]
+plt.figure(figsize=(240,6))
+plt.plot(temp,'-')
+plt.plot(yhat_tr,'-',alpha=1)
+plt.savefig('temp2.png',dip=300)
